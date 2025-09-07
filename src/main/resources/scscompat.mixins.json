@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.bikerboys.scscompat.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "modid.refmap.json",
+  "mixins": [
+    "TestMixin"
+  ],
+  "client": [
+  ],
+  "minVersion": "0.8"
+}
