@@ -15,7 +15,7 @@ base {
     archivesName = mod_id
 }
 
-apply plugin: 'org.spongepowered.mixin'
+
 
 
 
@@ -138,6 +138,12 @@ repositories {
         name = "Illusive Soulworks maven"
         url = "https://maven.theillusivec4.top/"
     }
+    maven {
+        name = "C4's Maven"
+        url = "https://maven.theillusivec4.top/"
+    }
+
+
 }
 
 dependencies {
@@ -147,17 +153,27 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+
+    implementation fg.deobf("curse.maven:caelus-forge-308989:5281700")
+
+    implementation fg.deobf("curse.maven:epic-fight-mod-405076:6968125")
+    implementation fg.deobf("curse.maven:geckolib-388172:6920925")
+
+    implementation fg.deobf("curse.maven:cosmetic-armor-reworked-237307:4600191-api-4600193")
+    implementation fg.deobf("curse.maven:origins-forge-474438:5314209")
 
     // Compile against only the API artifact
-    compileOnly "top.theillusivec4.curios:curios-forge:${curios_version}:api"
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     // Use the full Curios API jar at runtime
-    runtimeOnly "top.theillusivec4.curios:curios-forge:${curios_version}"
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     implementation fg.deobf("curse.maven:saros-char-system-1150335:6434592")
+    compileOnly 'org.spongepowered:mixin:0.8.5-SNAPSHOT'
 
 
 
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
@@ -173,6 +189,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
+
+
 
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
@@ -191,6 +209,12 @@ tasks.named('processResources', ProcessResources).configure {
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
         expand replaceProperties + [project: project]
     }
+}
+
+mixin {
+    add sourceSets.main, "scscompat.refmap.json"
+
+    config "scscompat.mixins.json"
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
@@ -212,11 +236,7 @@ tasks.named('jar', Jar).configure {
 }
 
 
-mixin {
-    add sourceSets.main, "scscompat.refmap.json"
 
-    config "scscompat.mixins.json"
-}
 
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing:
 // tasks.named('publish').configure {
